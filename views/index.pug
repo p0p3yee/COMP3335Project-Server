@@ -1,7 +1,8 @@
 html
     include navbar
     body
-        script(src = "/public/script.js")
+        script(src = "/public/dropzone-bundle.js")
+        br
         div(class = "container")
             form(action = "/upload" class = "dropzone" id = "myDropzone" method = "post" enctype = "multipart/form-data")
                 div(class = "fallback")

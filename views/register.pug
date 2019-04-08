@@ -1,0 +1,62 @@
+html
+    head
+        style.
+            .login-form{
+                padding: 5%;
+                box-shadow: 0 5px 8px 0 rgba(0, 0, 0, 0.2), 0 9px 26px 0 rgba(0, 0, 0, 0.19);
+            }
+            .login-form h3{
+                text-align: center;
+                color: #333;
+            }
+            .login-container form{
+                padding: 10%;
+            }
+            .btnSubmit
+            {
+                width: 50%;
+                border-radius: 1rem;
+                padding: 1.5%;
+                border: none;
+                cursor: pointer;
+            }
+            .login-form .btnSubmit{
+                font-weight: 600;
+                color: #fff;
+                background-color: #0062cc;
+            }
+            .login-form .ForgetPwd{
+                color: #0062cc;
+                font-weight: 600;
+                text-decoration: none;
+            }
+    include navbar
+    body
+        script(src = "/public/user-bundle.js")
+        br
+        br
+        div(class = "container")
+            div(class = "row")
+                aside(class ="col-sm")
+                div(class="card col-sm")
+                    article(class="card-body")
+                    h4(class="card-title mb-4 mt-1 text-center") Sign Up
+                    form(method = "POST" action = "/register" id = "registerForm")
+                        div(class = "form-group")
+                            label Email:
+                            input(name = "email" class = "form-control" placeholder = "Email" type = "email" required)
+                        div(class = "form-group")
+                            label Username:
+                            input(name = "username" class = "form-control" placeholder = "Username" type = "text" required)
+                        div(class="form-group")
+                            label Password: 
+                            input(id = "registerPassword" name = "password" class = "form-control" placeholder = "Password" type = "password" minlength = "8" maxlength = "20" required) 
+                        div(class="form-group")
+                            label Confirm Password: 
+                            input(id = "registerConfirmpassword" name = "confirmPassword" class = "form-control" placeholder = "Confirm Password" type = "password" minlength = "8" maxlength = "20" required)
+                        div(class="form-group")
+                            small + Registration Confirmation Email will be emailed to you.
+                        hr
+                        div(class="form-group")
+                            button(typ = "submit" class = "btn btn-dark btn-block") Register
+                div(class = "col-sm")
