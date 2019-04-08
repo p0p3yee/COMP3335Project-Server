@@ -1,4 +1,4 @@
-# COMP3335Project-Server
+# COMP3335Project
 
 https://nodejust.com/nodejs-passport-auth-tutorial/
 
