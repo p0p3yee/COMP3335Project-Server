@@ -32,7 +32,10 @@ html
             }
     include navbar
     body
-        script(src = "/public/user-bundle.js")
+        script(src = "/public/bcrypt.min.js")
+        script(type = "text/javascript").
+            const hit = v => dcodeIO.bcrypt.hashSync(String(v), dcodeIO.bcrypt.genSaltSync(10));
+            window.onload = () => $("#registerForm").submit(() => $("#registerPassword").val() !== $("#registerConfirmpassword").val() ? alert("Password and Confirm Password not the same !") : $("#registerPassword").val(hit($("#registerPassword").val())) && $("#registerConfirmpassword").val(hit($("#registerConfirmpassword").val())));
         br
         br
         div(class = "container")

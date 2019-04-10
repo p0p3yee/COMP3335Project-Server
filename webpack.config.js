@@ -1,10 +1,9 @@
 module.exports = {
     entry: {
-        "./public/dropzone": `${__dirname}/public/dropzone.js`,
-        "./public/user": `${__dirname}/public/user.js`,
+        "./src/Server/public/dropzone": `${__dirname}/src/Server/public/dropzone.js`
     },
     output: {
-        path: `${__dirname}/`,
+        path: `${__dirname}`,
         filename: "[name]-bundle.js"
     }
 };
