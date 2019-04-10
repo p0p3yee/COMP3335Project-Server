@@ -1,5 +1,7 @@
+require("dotenv").config();
 const client = require("ipfs-http-client");
 const express = require("express");
+const https = require("https");
 const multer = require('multer');
 const passport = require("passport");
 const strategy = require("./src/Auth")
@@ -68,4 +70,7 @@ app.post(`/login`, passport.authenticate("local", {session: false}),(req, res) =
 
 })
 
-app.listen(8080, () => console.log("Listening on port 8080."))
+https.createServer({
+    key: fs.readFileSync("./certs/server.key"),
+    cert: fs.readFileSync("./certs/server.cert")
+}, app).listen(process.env.PORT || 443, () => console.log(`Now Listening on PORT: ${process.env.PORT || 443}`))
