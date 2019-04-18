@@ -6,5 +6,6 @@ contract COMP3335{
         bytes32 hash;
         mapping(address => boolean) sharing;
     }
-    mapping(address => )
+    
+    mapping(address => File);
 }
