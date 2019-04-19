@@ -32,13 +32,15 @@ html
             }
     include navbar
     body
-        script(src = "/public/bcrypt.min.js")
-        script(type = "text/javascript").
-            const hit = v => dcodeIO.bcrypt.hashSync(String(v), dcodeIO.bcrypt.genSaltSync(10));
-            window.onload = () => $("#loginForm").submit(() => $("#loginPassword").val(hit($("#loginPassword").val())));
         br
         br
         div(class = "container")
+            if message != "" && typeof(message) != "undefined"
+                div(class = "alert alert-danger fade show" role="alert") #{message}
+                script(type = "text/javascript").
+                    (() => setTimeout(()=>$(".alert").alert("close"), 3000))()
+            if successMessage != "" && typeof(successMessage) != "undefined"
+                div(class = "alert alert-success" role="alert") #{successMessage}
             div(class = "row")
                 aside(class ="col-sm")
                 div(class="card col-sm")
@@ -51,7 +53,7 @@ html
                         div(class="form-group")
                             label Password: 
                             input(id = "loginPassword" name = "password" class = "form-control" placeholder = "Password" type = "password" minlength = "8" maxlength = "20" required)
-                        a(class = "float-right text-dark" href="/password") Forgot Password?
+                        a(class = "float-right text-dark" href="/forgot") Forgot Password?
                         div(class="form-group")
                             div(class="checkbox")
                                 input(type="checkbox")
