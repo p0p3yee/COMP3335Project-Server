@@ -23,7 +23,10 @@ body
             ul(class = "navbar-nav my-2 my-lg-0")
                 li(class = "nav-item dropdown active")
                     if user
-                        a(class="nav-link dropdown-toggle" href = "#" id = "navbarDropdown" role = "button" data-toggle = "dropdown" aria-haspopup="true" aria-expanded="false") Profile
+                        a(class="nav-link dropdown-toggle" href = "#" id = "navbarDropdown" role = "button" data-toggle = "dropdown" aria-haspopup="true" aria-expanded="false")
+                            span.
+                                User:&nbsp
+                            strong #{user.email}
                         div(class = "dropdown-menu dropdown-menu-right" aria-labelledby = "navbarDropdown")
                             a(class = "dropdown-item" href = "/profile") Edit Profile
                             a(class = "dropdown-item" href = "/logout") Logout

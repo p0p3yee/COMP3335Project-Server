@@ -23,7 +23,7 @@ new Promise(async (resolve, reject) => {
 .then(conn => {
     this.inited = true;
 
-    this.insertNewUser = (email, password) => new Promise((resolve, reject) => conn.execute(`INSERT INTO User (email, password) VALUES (?, ?)`, [email, password])
+    this.insertNewUser = (email, password, code) => new Promise((resolve, reject) => conn.execute(`INSERT INTO User (email, password, activationCode) VALUES (?, ?)`, [email, password, code])
     .then(r => resolve({
         affectedRows: r[0].affectedRows,
         userID: r[0].insertId 

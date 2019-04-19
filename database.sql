@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS User(
     email VARCHAR(255) NOT NULL,
     password VARCHAR(255) NOT NULL,
     activated BOOLEAN NOT NULL DEFAULT 0,
+    activationCode VARCHAR(10) NOT NULL,
     address VARCHAR(255),
     shastaKey VARCHAR(255),
     registerationTime DATETIME DEFAULT CURRENT_TIMESTAMP NOT NULL,

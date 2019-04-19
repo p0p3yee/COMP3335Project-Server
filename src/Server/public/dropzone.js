@@ -1,6 +1,6 @@
 (function(){
     Dropzone.options.myDropzone = {
-        maxFilesize: 50,
+        maxFilesize: 30,
         fallback: () => alert("Your browser does not support dropzone..."),
         init() {
             this.on("addedfile", f => console.log("Added File: ", f));

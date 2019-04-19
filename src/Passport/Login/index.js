@@ -16,6 +16,9 @@ module.exports = new localStrategy({
         const user = await Database.getUserByEmail(email);
         if(!Encryption.bcryptCompare(password, user.password)) return done(null, false, req.flash("loginMessage", "ERROR: Incorrect Password."));
 
+        if(req.body.remember) req.session.cookie.maxAge = 1000 * 60 * 30;
+        else req.session.cookie.expires = false;
+
         return done(null, user);
 
     }catch(e){

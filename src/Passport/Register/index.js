@@ -1,7 +1,7 @@
 const localStrategy = require("passport-local").Strategy;
-const mysql = require("mysql2/promise");
+const Verf = require("../../SendGrid");
 const Database = require("../../Database");
-const Encryption = require("../../Encryption");
+
 
 module.exports = new localStrategy({
     usernameField: "email",
@@ -18,13 +18,19 @@ module.exports = new localStrategy({
 
         if(emailExists) return done(null, false, req.flash("registerMessage", "Error: Email already exists."));
 
-        const insertResult = await Database.insertNewUser(email, password);
+        const verfCode = Verf.generateCode();
+
+        const insertResult = await Database.insertNewUser(email, password, verfCode);
         
-        if(insertResult.affectedRows >= 1) return done(null, {
-            email: email,
-            password: password,
-            id: insertResult.userID
-        }, req.flash("registerMessage", `Verification Email have been sent to ${email}.`));
+        if(insertResult.affectedRows >= 1){
+            const sendResult = await Verf.send(email, "COMP3335 Group 18 Verification Code", `Dear User, Your Verification Code is: ${verfCode}\nThanks,\nCOMP3335 - Group 18.`, `Dear User,<br>Your Verification Code is: <strong>${verfCode}</strong><br>Thanks,<br>COMP3335 - Group 18.`)
+            console.log("Send Result: ", sendResult);
+            return done(null, {
+                email: email,
+                password: password,
+                id: insertResult.userID
+            }, req.flash("registerMessage", `Verification Code have been sent to ${email}.<br>Please enter the code in Profile Page.`));
+        }
         
         return done(null, false, req.flash("registerMessage", "Error: Some Error occured, Try again later."))
     

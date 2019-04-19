@@ -23,7 +23,9 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(session({
-    secret: "iL0vE_C0MP3335_D4t4b4se"
+    secret: "iL0vE_C0MP3335_D4t4b4se",
+    resave: true,
+    saveUninitialized: true
 }))
 app.use(bodyParser.json());
 app.use(passport.initialize());
