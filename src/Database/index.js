@@ -49,6 +49,17 @@ new Promise(async (resolve, reject) => {
     this.updateUserPasswordByID = (password, id) => new Promise((resolve, reject) => conn.execute(`UPDATE User SET password = ? Where id = ?`, [password, id])
     .then(v => resolve(v[0].affectedRows))
     .catch(e => reject(e)));
+
+    this.addFile = (id, iv, time, mimeType) => new Promise((resolve, reject) => conn.execute(`INSERT INTO File (ownerID, iv, createTime, mimeType) VALUES (?, ?, FROM_UNIXTIME(?), ?)`, [id, iv, time, mimeType])
+    .then(r => resolve({
+        affectedRows: r[0].affectedRows,
+        id: r[0].insertId 
+    }))
+    .catch(e => reject(e)));
+
+    this.uploadedFile = (id, hash, time) => new Promise((resolve, reject) => conn.execute(`UPDATE File SET hash = ?, uploadTime = FROM_UNIXTIME(?) WHERE id = ?`, [hash, time, id])
+    .then(v => resolve(v[0].affectedRows))
+    .catch(e => reject(e)));
 })
 .catch(e => {
     this.error = e;
