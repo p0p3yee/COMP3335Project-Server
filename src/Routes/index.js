@@ -4,6 +4,8 @@ const uploadHandler = require("../RequestHandlers/Post/upload");
 const forgotHandler = require("../RequestHandlers/Post/forgot");
 const profileHandler = require("../RequestHandlers/Post/profile");
 const filesHandler = require("../RequestHandlers/Get/files");
+const shareViaEmail = require("../RequestHandlers/Post/shareViaEmail");
+const fileDeleteHandler = require("../RequestHandlers/Post/fileDelete");
 
 const upload = multer({
     dest: `${__dirname}/../../uploads`
@@ -59,4 +61,6 @@ module.exports = (app, passport) => {
         message: req.flash("profileMessage")
     }))
     app.get("/files", authed, filesHandler)
+    app.post("/files/delete", authed, fileDeleteHandler)
+    app.post("/share/email", authed, shareViaEmail)
 }

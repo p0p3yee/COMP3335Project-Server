@@ -2,7 +2,14 @@ html
     include navbar
     body
         br
+        // script(src = "/public/files-bundle.js")
         div(class = "container")
+            if successMessage != "" && typeof(successMessage) != "undefined"
+                div(class = "alert alert-success fade show" role="alert") #{successMessage}
+            if failMessage != "" && typeof(failMessage) != "undefined"
+                div(class = "alert alert-danger" role="alert") #{failMessage}
+            script(type = "text/javascript").
+                (() => setTimeout(()=>$(".alert").alert("close"), 3000))()
             if noupload
                 div(class = "alert alert-warning") You have no file uploaded !
             else
@@ -26,7 +33,9 @@ html
                                     td #{v.extension}
                                     td #{v.createTime}
                                     td
-                                        button(class = "btn btn-dark" type = "button" onClick = `deleteFile(${v.id})`) Delete
+                                        form(action = "/files/delete" method = "POST")
+                                            input(hidden name = "id" value = v.id)
+                                            button(class = "btn btn-dark deleteBtn" type = "submit") Delete
                                     td #{v.public ? "Public" : "Private"}
                                     td
                                         button(class = "btn btn-dark" type = "button" data-toggle="modal" data-target="#shareBox" data-fileid = v.id data-filename = v.orgName) Setting
@@ -63,23 +72,21 @@ html
                                     div(class = "form-group")
                                         label(class = "col-form-label") Share to other Users:
                                     hr
+                                form(action = "/share/email" method = "POST")
                                     div(class = "form-group")
                                         label(class = "col-form-label") Share via Email:
-                                        input(type = "email" class = "form-control" placeholder = "Receiver Email")
+                                        input(name = "id" id = "shareEmailID" hidden)
+                                        input(required type = "email" name = "receiverEmail" id = "receiverEmail" class = "form-control" placeholder = "Receiver Email")
                                         br
-                                        input(type = "button" value = "Share" class = "form-control btn btn-dark")
+                                        input(id = "shareBtn" type = "submit" value = "Share" class = "form-control btn btn-dark")
                             div(class = "modal-footer")
                                 button(type = "button" class = "btn btn-secondary" data-dismiss="modal") Close
                                 button(type = "button" class = "btn btn-success") Save Changes
                 script(type = "text/javascript").
-                    function deleteFile(id){
-                        if(confirm("Are you sure you want to delete this file ?")){
-
-                        }
-                    }
                     $("#shareBox").on("show.bs.modal", e => {
                         $("#fileid").val($(e.relatedTarget).data("fileid"))
                         $("#filename").val($(e.relatedTarget).data("filename"))
+                        $("#shareEmailID").val($(e.relatedTarget).data("fileid"))
                     })
             hr
             h4(class = "text-center") Files Shared to You.

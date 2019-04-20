@@ -5,6 +5,8 @@ module.exports = async (req, res) => {
     res.render("files", {
         noupload: uploaded.length == 0,
         files: uploaded,
-        user: req.user
+        user: req.user,
+        successMessage: req.flash("successMessage"),
+        failMessage: req.flash("failMessage")
     })
 }

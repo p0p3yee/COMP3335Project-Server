@@ -65,6 +65,14 @@ new Promise(async (resolve, reject) => {
         return resolve(v[0]);
     })
     .catch(e => reject(e)));
+
+    this.deleteFile = fileid => new Promise((resolve, reject) => conn.execute(`UPDATE File SET deleted = 1 WHERE id = ?`, [fileid])
+    .then(r => resolve(r[0].affectedRows))
+    .catch(e => reject(e)));
+
+    this.getFileByFileID = fileid => new Promise((resolve, reject) => conn.execute(`SELECT * FROM File WHERE id = ?`, [fileid])
+    .then(v => resolve(v[0][0]))
+    .catch(e => reject(e)));
 })
 .catch(e => {
     this.error = e;
