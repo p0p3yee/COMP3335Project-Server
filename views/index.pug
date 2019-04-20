@@ -3,6 +3,17 @@ html
     body
         br
         div(class = "container")
-            h1 G18 Upload
-            h2 Upload your file to IPFS
-            
+            if successMessage != "" && typeof(successMessage) != "undefined"
+                div(class = "alert alert-success fade show" role="alert") #{successMessage}
+            if failMessage != "" && typeof(failMessage) != "undefined"
+                div(class = "alert alert-danger" role="alert") #{failMessage}
+            script(type = "text/javascript").
+                (() => setTimeout(()=>$(".alert").alert("close"), 3000))()
+
+            h1(class = "text-center") G18Upload
+            br
+            h3(class = "text-center") Upload Files for FREE
+            br
+            h5(class = "text-center") Secure and Free File Uploading Site.
+            br
+            h6(class = "text-center") Register now and start uploading.

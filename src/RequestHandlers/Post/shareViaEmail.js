@@ -19,4 +19,8 @@ module.exports = async (req, res) => {
         req.flash("failMessage", "File or Email Not Found.");
         res.redirect("/files")
     }
+    // [Object: null prototype] { id: '4', receiverEmail: '23@s', onetime: '1' }
+    // [Object: null prototype] { id: '4', receiverEmail: '23@s' }
+
+    console.log(req.body);
 }

@@ -73,6 +73,26 @@ new Promise(async (resolve, reject) => {
     this.getFileByFileID = fileid => new Promise((resolve, reject) => conn.execute(`SELECT * FROM File WHERE id = ?`, [fileid])
     .then(v => resolve(v[0][0]))
     .catch(e => reject(e)));
+
+    this.setFilePublicByID = (fileid, public) => new Promise((resolve, reject) => conn.execute(`UPDATE File SET public = ? WHERE id = ?`, [public, fileid])
+    .then(r => resolve(r[0].affectedRows))
+    .catch(e => reject(e)));
+
+    this.getShareByID = id => new Promise((resolve, reject) => conn.execute(`SELECT * FROM Share WHERE id = ?`, [id])
+    .then(v => resolve(v[0][0]))
+    .catch(e => reject(e)));
+
+    this.getAllShareByOwnerID = id => new Promise((resolve, reject) => conn.execute(`SELECT * FROM Share WHERE ownerID = ?`, [id])
+    .then(v => resolve(v[0]))
+    .catch(e => reject(e)));
+
+    this.getAllShareByToUserID = id => new Promise((resolve, reject) => conn.execute(`SELECT * FROM Share WHERE toUserID = ?`, [id])
+    .then(v => resolve(v[0]))
+    .catch(e => reject(e)));
+
+    this.getShareByHash = hash =>  new Promise((resolve, reject) => conn.execute(`SELECT * FROM Share WHERE hash = ?`, [hash])
+    .then(v => resolve(v[0][0]))
+    .catch(e => reject(e)));
 })
 .catch(e => {
     this.error = e;

@@ -2,14 +2,13 @@ html
     include navbar
     body
         br
-        // script(src = "/public/files-bundle.js")
         div(class = "container")
             if successMessage != "" && typeof(successMessage) != "undefined"
                 div(class = "alert alert-success fade show" role="alert") #{successMessage}
             if failMessage != "" && typeof(failMessage) != "undefined"
                 div(class = "alert alert-danger" role="alert") #{failMessage}
             script(type = "text/javascript").
-                (() => setTimeout(()=>$(".alert").alert("close"), 3000))()
+                (() => setTimeout(()=>$(".alert").alert("close"), 5000))()
             if noupload
                 div(class = "alert alert-warning") You have no file uploaded !
             else
@@ -25,10 +24,14 @@ html
                             th(scope = "col") Privacy
                             th(scope = "col") Share 
                     tbody
+                        -
+                            var index = 0
                         each v, i in files
                             if !v.deleted
+                                -
+                                    index= index + 1
                                 tr
-                                    th(scope = "row") #{i}
+                                    th(scope = "row") #{index}
                                     td #{v.orgName}
                                     td #{v.extension}
                                     td #{v.createTime}
@@ -38,17 +41,16 @@ html
                                             button(class = "btn btn-dark deleteBtn" type = "submit") Delete
                                     td #{v.public ? "Public" : "Private"}
                                     td
-                                        button(class = "btn btn-dark" type = "button" data-toggle="modal" data-target="#shareBox" data-fileid = v.id data-filename = v.orgName) Setting
-                
+                                        button(class = "btn btn-dark" type = "button" data-toggle="modal" data-target="#shareBox" data-ispublic = v.public data-fileid = v.id data-filename = v.orgName) Setting
                 div(class = "modal fade" id = "shareBox" tabindex = "-1" role = "dialog" aria-labelledby = "shareBoxTitle" aria-hidden = "true")
                     div(class = "modal-dialog modal-dialog-centered" role = "document")
                         div(class = "modal-content")
                             div(class = "modal-header")
-                                h5(class = "modal-title" id = "shareBoxLongTitle") File Share Setting
+                                h5(class = "modal-title" id = "shareBoxLongTitle") File Sharing Setting
                                 button(type = "button" class = "close" data-dismiss = "modal" aria-label = "Close")
                                     span(aria-hidden = "true") &times;
                             div(class = "modal-body")
-                                form(action="")
+                                form(action="/files/update" method = "POST" id = "updateForm")
                                     input(type = "text" class = "form-control" id = "fileid" name = "fileid" hidden)
                                     div(class = "form-group")
                                         label(class = "col-form-label") File Name:
@@ -57,11 +59,11 @@ html
                                     div(class = "form-group")
                                         label(class = "col-form-label") Privcay Setting:
                                         br
-                                        div(class = "btn-group btn-group-toggle" data-toggle="buttons")
-                                            label(class = "btn btn-dark active")
-                                                input(type = "radio" name = "public" autocomplete = "off" value = "0" checked)
+                                        div(class = "btn-group btn-group-toggle" data-toggle="buttons" style = "width: 100%")
+                                            label(class = "btn btn-dark privateBtnClass")
+                                                input(type = "radio" name = "public" autocomplete = "off" value = "0")
                                                 | Private
-                                            label(class = "btn btn-dark")
+                                            label(class = "btn btn-dark publicBtnClass")
                                                 input(type = "radio" name = "public" autocomplete = "off" value = "1")
                                                 | Public
                                         br
@@ -72,25 +74,55 @@ html
                                     div(class = "form-group")
                                         label(class = "col-form-label") Share to other Users:
                                     hr
+                                    div(class = "form-group")
+                                        label(class = "col-form-label") Access Link:
+                                        input(class = "form-control" id = "accessLink" type = "text" value = accessLink ? accessLink : "" disabled)
+                                        br
+                                        button(class = "form-control btn btn-dark" id = "newLinkBtn" type = "button") Get New Access Link
+                                    hr
                                 form(action = "/share/email" method = "POST")
                                     div(class = "form-group")
                                         label(class = "col-form-label") Share via Email:
                                         input(name = "id" id = "shareEmailID" hidden)
                                         input(required type = "email" name = "receiverEmail" id = "receiverEmail" class = "form-control" placeholder = "Receiver Email")
                                         br
+                                        div(class = "form-check")
+                                            input(class = "form-check-input" type = "checkbox" value = "1" name = "onetime" id = "oneTimeCheck")
+                                            label(class = "form-check-label" for = "oneTimeCheck") One Time Link
+                                        br
                                         input(id = "shareBtn" type = "submit" value = "Share" class = "form-control btn btn-dark")
                             div(class = "modal-footer")
                                 button(type = "button" class = "btn btn-secondary" data-dismiss="modal") Close
-                                button(type = "button" class = "btn btn-success") Save Changes
+                                button(type = "button" class = "btn btn-success" id = "saveBtn") Save Changes
                 script(type = "text/javascript").
                     $("#shareBox").on("show.bs.modal", e => {
                         $("#fileid").val($(e.relatedTarget).data("fileid"))
                         $("#filename").val($(e.relatedTarget).data("filename"))
                         $("#shareEmailID").val($(e.relatedTarget).data("fileid"))
+                        $($(e.relatedTarget).data("ispublic") == "0" ? ".privateBtnClass" : ".publicBtnClass").addClass("active");
+                    })
+                    $("#saveBtn").on("click", () => {
+                        $("#updateForm").submit();
+                    })
+                    $("#newLinkBtn").on("click", () => {
+                        $.ajax({
+                            data: {
+                                type: "POST",
+                                url: "",
+                                data: {
+                                    id: $("#fileid").val()
+                                },
+                                success: result => {
+                                    $("#accessLink").val(result);
+                                },
+                                error: err => alert("Try again Later...")
+                            }
+                        }, )
                     })
             hr
-            h4(class = "text-center") Files Shared to You.
-            if !noshare
+            if noshare
                 div(class = "alert alert-warning") No File Shared to you !
             else
-                
+                h4(class = "text-center") Files Shared to You. 
+            if noshare && noupload
+                h1(class = "text-center") No File Uploaded & Shared.

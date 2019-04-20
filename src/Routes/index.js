@@ -6,6 +6,9 @@ const profileHandler = require("../RequestHandlers/Post/profile");
 const filesHandler = require("../RequestHandlers/Get/files");
 const shareViaEmail = require("../RequestHandlers/Post/shareViaEmail");
 const fileDeleteHandler = require("../RequestHandlers/Post/fileDelete");
+const fileUpdateHandler = require("../RequestHandlers/Post/fileUpdate");
+const downloadHandler = require("../RequestHandlers/Get/downloadHandler");
+
 
 const upload = multer({
     dest: `${__dirname}/../../uploads`
@@ -35,7 +38,8 @@ module.exports = (app, passport) => {
     app.post("/forgot", forgotHandler);
     app.post("/profile", (req, res, next) => req.user ? next() : res.redirect("/login"), profileHandler);
     app.get("/", (req, res) => res.render("index", {
-        user: req.user
+        user: req.user,
+        failMessage: req.flash("failMessage")
     }))
     app.get("/upload", authed, (req, res) => res.render("upload", {
         user: req.user
@@ -60,7 +64,9 @@ module.exports = (app, passport) => {
         successMessage: req.flash("registerMessage"),
         message: req.flash("profileMessage")
     }))
+    app.get("/download/:hash", downloadHandler);
     app.get("/files", authed, filesHandler)
     app.post("/files/delete", authed, fileDeleteHandler)
+    app.post("/files/update", authed, fileUpdateHandler);
     app.post("/share/email", authed, shareViaEmail)
 }
