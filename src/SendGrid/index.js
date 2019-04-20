@@ -11,7 +11,7 @@ module.exports = {
         if(!!!process.env.sendgrid_api) return reject("No SendGrid API Key Found.");
         mail.send({
             to: to,
-            from: `noreply@G18COMP3335.com`,
+            from: `G18COMP3335@G18COMP3335.com`,
             subject: subject,
             text: text,
             html: html || text
@@ -21,7 +21,7 @@ module.exports = {
 
     generateCode: () => {
         this.result = "";
-        for (var i = 0; i < 6; i++) result += comb.charAt(Math.floor(Math.random() * comb.length))
+        for (var i = 0; i < 6; i++) this.result += comb.charAt(Math.floor(Math.random() * comb.length))
         return this.result;
     }
 }

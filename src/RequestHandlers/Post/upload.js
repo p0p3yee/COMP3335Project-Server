@@ -1,4 +1,3 @@
-
 const client = require("ipfs-http-client");
 const ipfs = client("ipfs.infura.io", 5001, {protocol: "https"});
 const MAX_SIZE = 524288000;
