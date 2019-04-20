@@ -19,10 +19,20 @@ body
                 li(class="nav-item active")
                     a(class="nav-link" href="/") Home 
                         span(class="sr-only") (Current)
-                li(class="nav-item active")
-                    a(class="nav-link" href="/upload") Upload 
-                        span(class="sr-only") (Current)
-
+                if user
+                    li(class="nav-item active")
+                        a(class="nav-link" href="/upload") Upload 
+                            span(class="sr-only") (Current)
+                    li(class="nav-item active")
+                        a(class="nav-link" href="/files") My Files 
+                            span(class="sr-only") (Current)
+                else
+                    li(class="nav-item active")
+                        a(class="nav-link" href="/login") Login 
+                            span(class="sr-only") (Current)
+                    li(class="nav-item active")
+                        a(class="nav-link" href="/register") Register 
+                            span(class="sr-only") (Current)
             ul(class = "navbar-nav my-2 my-lg-0")
                 li(class = "nav-item dropdown active")
                     if user
@@ -31,7 +41,6 @@ body
                                 User:&nbsp
                             strong #{user.email}
                         div(class = "dropdown-menu dropdown-menu-right" aria-labelledby = "navbarDropdown")
-                            a(class = "dropdown-item" href = "/files") Files
                             a(class = "dropdown-item" href = "/profile") Edit Profile
                             a(class = "dropdown-item" href = "/logout") Logout
                     else

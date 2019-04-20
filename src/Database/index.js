@@ -50,15 +50,20 @@ new Promise(async (resolve, reject) => {
     .then(v => resolve(v[0].affectedRows))
     .catch(e => reject(e)));
 
-    this.addFile = (id, iv, time, mimeType) => new Promise((resolve, reject) => conn.execute(`INSERT INTO File (ownerID, iv, createTime, mimeType) VALUES (?, ?, FROM_UNIXTIME(?), ?)`, [id, iv, time, mimeType])
+    this.uploadFile = (id, iv, time, mimeType, name, ext, orgname) => new Promise((resolve, reject) => conn.execute(`INSERT INTO File (ownerID, iv, createTime, mimeType, name, extension, orgName) VALUES (?, ?, FROM_UNIXTIME(?), ?, ?, ?, ?)`, [id, iv, time, mimeType, name, ext, orgname])
     .then(r => resolve({
         affectedRows: r[0].affectedRows,
         id: r[0].insertId 
     }))
     .catch(e => reject(e)));
 
-    this.uploadedFile = (id, hash, time) => new Promise((resolve, reject) => conn.execute(`UPDATE File SET hash = ?, uploadTime = FROM_UNIXTIME(?) WHERE id = ?`, [hash, time, id])
-    .then(v => resolve(v[0].affectedRows))
+    this.getUserUploaded = id => new Promise((resolve, reject) => conn.execute(`SELECT id, orgName, extension, createTime, deleted, public From File Where ownerID = ?`, [id])
+    .then(v => {
+        for(var i = 0; i < v[0].length; i++){
+            v[0][i].createTime = new Date(v[0][i].createTime).toLocaleString();
+        }
+        return resolve(v[0]);
+    })
     .catch(e => reject(e)));
 })
 .catch(e => {
