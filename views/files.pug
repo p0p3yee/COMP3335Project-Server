@@ -67,9 +67,9 @@ html
                                                 input(type = "radio" name = "public" autocomplete = "off" value = "1")
                                                 | Public
                                         br
-                                        small +Private: Only You can access the file.
+                                        small +Private: Only You & Shared users can access the file.
                                         br
-                                        small +Public: Any User get the link can access the file.
+                                        small +Public: Anyone get the link can access the file.
                                     hr
                                     div(class = "form-group")
                                         label(class = "col-form-label") Share to other Users:
@@ -106,18 +106,27 @@ html
                     })
                     $("#newLinkBtn").on("click", () => {
                         $.ajax({
+                            type: "POST",
+                            url: "/files/getLink",
                             data: {
-                                type: "POST",
-                                url: "",
-                                data: {
-                                    id: $("#fileid").val()
-                                },
-                                success: result => {
-                                    $("#accessLink").val(result);
-                                },
-                                error: err => alert("Try again Later...")
+                                id: $("#fileid").val()
+                            },
+                            success: r => {
+                                console.log(r)
+                                $("#accessLink").val(`/${r.result}`)
+                            },
+                            error: err => {
+                                alert("Try again Later...\n" + err)
                             }
                         }, )
+                    })
+                    $("#accessLink").on("click", () => {
+                        console.log(document.getElementById("accessLink"))
+                        var link = document.getElementById("accessLink");
+                        if(!!!link.value)return;
+                        link.select();
+                        document.execCommand("copy");
+                        alert("Link Copied !\n" + link.value);
                     })
             hr
             if noshare

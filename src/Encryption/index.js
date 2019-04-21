@@ -6,6 +6,7 @@ const cipherType = "aes-256-ctr";
 
 module.exports = {
     md5: txt => crypto.createHash("md5").update(txt).digest("hex"),
+    randHex: len => crypto.randomBytes(len).toString("hex"),
     bcryptCompare: (plain, hash) => bcrypt.compareSync(plain, hash),
     bcrypt: plain => bcrypt.hashSync(plain, bcrypt.genSaltSync(10)),
     /**

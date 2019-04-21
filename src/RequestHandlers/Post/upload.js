@@ -68,7 +68,7 @@ module.exports = async (req, res) => {
     const saveAs = `${req.file.path}-enc`;
 
     try{
-        const now = parseInt(Date.now() / 1000);
+        const now = Date.now();
         const iv = await crypto.encryptFile(crypto.md5(`${req.user.password}@${now}`), fs.createReadStream(req.file.path), fs.createWriteStream(saveAs));
         await fs.unlink(req.file.path);
         const dbResult = await Database.uploadFile(req.user.id, iv, now, req.file.mimetype, path.basename(saveAs), path.extname(req.file.originalname), req.file.originalname);

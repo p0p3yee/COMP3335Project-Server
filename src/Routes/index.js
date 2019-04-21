@@ -8,8 +8,8 @@ const shareViaEmail = require("../RequestHandlers/Post/shareViaEmail");
 const fileDeleteHandler = require("../RequestHandlers/Post/fileDelete");
 const fileUpdateHandler = require("../RequestHandlers/Post/fileUpdate");
 const downloadHandler = require("../RequestHandlers/Get/downloadHandler");
-
-
+const getLinkHandler = require("../RequestHandlers/Post/getLinkHandler");
+const shareHandler = require("../RequestHandlers/Get/shareHandler");
 const upload = multer({
     dest: `${__dirname}/../../uploads`
 });
@@ -64,9 +64,16 @@ module.exports = (app, passport) => {
         successMessage: req.flash("registerMessage"),
         message: req.flash("profileMessage")
     }))
-    app.get("/download/:hash", downloadHandler);
+    app.get("/share/:hash", shareHandler);
+    app.get("/download/:link", downloadHandler)
     app.get("/files", authed, filesHandler)
     app.post("/files/delete", authed, fileDeleteHandler)
     app.post("/files/update", authed, fileUpdateHandler);
     app.post("/share/email", authed, shareViaEmail)
+    app.post("/files/getLink", (req, res, next) => {
+        if(req.isAuthenticated()) return next();
+        return res.json({
+            error: "Please Login First."
+        })
+    }, getLinkHandler);
 }

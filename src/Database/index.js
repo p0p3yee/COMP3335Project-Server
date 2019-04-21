@@ -50,7 +50,7 @@ new Promise(async (resolve, reject) => {
     .then(v => resolve(v[0].affectedRows))
     .catch(e => reject(e)));
 
-    this.uploadFile = (id, iv, time, mimeType, name, ext, orgname) => new Promise((resolve, reject) => conn.execute(`INSERT INTO File (ownerID, iv, createTime, mimeType, name, extension, orgName) VALUES (?, ?, FROM_UNIXTIME(?), ?, ?, ?, ?)`, [id, iv, time, mimeType, name, ext, orgname])
+    this.uploadFile = (id, iv, time, mimeType, name, ext, orgname) => new Promise((resolve, reject) => conn.execute(`INSERT INTO File (ownerID, iv, createTime, mimeType, name, extension, orgName) VALUES (?, ?, ?, ?, ?, ?, ?)`, [id, iv, String(time), mimeType, name, ext, orgname])
     .then(r => resolve({
         affectedRows: r[0].affectedRows,
         id: r[0].insertId 
@@ -60,7 +60,7 @@ new Promise(async (resolve, reject) => {
     this.getUserUploaded = id => new Promise((resolve, reject) => conn.execute(`SELECT id, orgName, extension, createTime, deleted, public From File Where ownerID = ?`, [id])
     .then(v => {
         for(var i = 0; i < v[0].length; i++){
-            v[0][i].createTime = new Date(v[0][i].createTime).toLocaleString();
+            v[0][i].createTime = new Date(parseInt(v[0][i].createTime)).toLocaleString();
         }
         return resolve(v[0]);
     })
@@ -82,6 +82,10 @@ new Promise(async (resolve, reject) => {
     .then(v => resolve(v[0][0]))
     .catch(e => reject(e)));
 
+    this.getShareByFileID = id => new Promise((resolve, reject) => conn.execute(`SELECT * FROM Share WHERE fileID = ?`, [id])
+    .then(v => resolve(v[0]))
+    .catch(e => reject(e)));
+
     this.getAllShareByOwnerID = id => new Promise((resolve, reject) => conn.execute(`SELECT * FROM Share WHERE ownerID = ?`, [id])
     .then(v => resolve(v[0]))
     .catch(e => reject(e)));
@@ -90,7 +94,15 @@ new Promise(async (resolve, reject) => {
     .then(v => resolve(v[0]))
     .catch(e => reject(e)));
 
-    this.getShareByHash = hash =>  new Promise((resolve, reject) => conn.execute(`SELECT * FROM Share WHERE hash = ?`, [hash])
+    this.getShareByHash = hash => new Promise((resolve, reject) => conn.execute(`SELECT * FROM Share WHERE hash = ?`, [hash])
+    .then(v => resolve(v[0][0]))
+    .catch(e => reject(e)));
+
+    this.setLinkByFileID = (id, link) =>  new Promise((resolve, reject) => conn.execute(`UPDATE File SET link = ? WHERE id = ?`, [link, id])
+    .then(v => resolve(v[0].affectedRows))
+    .catch(e => reject(e)));
+
+    this.getFileByLink = link => new Promise((resolve, reject) => conn.execute(`SELECT * FROM File WHERE link = ?`, [link])
     .then(v => resolve(v[0][0]))
     .catch(e => reject(e)));
 })

@@ -1,5 +1,8 @@
 node_modules/
 uploads/*
 !uploads/.gitkeep
+!uploads/Decrypted
+uploads/Decrypted/*
+!uploads/Decrypted/.gitkeep
 .env
 certs/

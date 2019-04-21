@@ -26,9 +26,7 @@ module.exports = async (req, res) => {
     if(result >= 1){
         try{
             await fs.unlink(`${__dirname}/../../../uploads/${file.name}`)
-        }catch(e){
-            console.log(e);
-        }
+        }catch(e){}
         req.flash("successMessage", "File Deleted.");
         return res.redirect("/files");
     }else{
