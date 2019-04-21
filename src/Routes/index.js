@@ -10,6 +10,7 @@ const fileUpdateHandler = require("../RequestHandlers/Post/fileUpdate");
 const downloadHandler = require("../RequestHandlers/Get/downloadHandler");
 const getLinkHandler = require("../RequestHandlers/Post/getLinkHandler");
 const shareHandler = require("../RequestHandlers/Get/shareHandler");
+const sharePageHandler = require("../RequestHandlers/Get/sharePageHandler");
 const upload = multer({
     dest: `${__dirname}/../../uploads`
 });
@@ -64,6 +65,7 @@ module.exports = (app, passport) => {
         successMessage: req.flash("registerMessage"),
         message: req.flash("profileMessage")
     }))
+    app.get("/share", authed, sharePageHandler);
     app.get("/share/:hash", shareHandler);
     app.get("/download/:link", downloadHandler)
     app.get("/files", authed, filesHandler)

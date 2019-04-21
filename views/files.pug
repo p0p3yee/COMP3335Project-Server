@@ -8,6 +8,16 @@ html
             shareClip.on("success", e => {
                 alert("Access Link Copied !\n" + e.text)
             })
+            $(document).ready( () => {
+                var opts = {
+                    "pagingType": "simple_numbers",
+                    "searching": true,
+                    "paging": true,
+                    "pageLength": 10
+                };
+                $('#uploadedFileTable').DataTable(opts);
+                $("#SharedTable").DataTable(opts);
+            });
         br
         div(class = "container")
             if successMessage != "" && typeof(successMessage) != "undefined"
@@ -20,7 +30,7 @@ html
                 div(class = "alert alert-warning") You have no file uploaded !
             else
                 h4(class = "text-center") Files You Uploaded.
-                table(class = "table")
+                table(class = "table" id = "uploadedFileTable")
                     thead(class = "thead-dark")
                         tr 
                             th(scope = "col") #
@@ -144,7 +154,7 @@ html
                 div(class = "alert alert-warning") No File Shared to you !
             else
                 h4(class = "text-center") Files Shared to You. 
-                table(class = "table")
+                table(class = "table" id = "SharedTable")
                     thead(class = "thead-dark")
                         tr 
                             th(scope = "col") #

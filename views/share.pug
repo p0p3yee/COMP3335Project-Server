@@ -1,0 +1,42 @@
+html
+    include navbar
+    body
+        div(class = "container")
+            br
+            if successMessage != "" && typeof(successMessage) != "undefined"
+                div(class = "alert alert-success fade show" role="alert") #{successMessage}
+            if failMessage != "" && typeof(failMessage) != "undefined"
+                div(class = "alert alert-danger" role="alert") #{failMessage}
+            script(type = "text/javascript").
+                (() => setTimeout(()=>$(".alert").alert("close"), 5000))()
+                $(document).ready( () => {
+                    $('#shareTable').DataTable({
+                        "pagingType": "simple_numbers",
+                        "searching": true,
+                        "paging": true,
+                        "pageLength": 10
+                    });
+                });
+            if noShare
+                div(class = "alert alert-warning") You haven't share any files !
+                h1(class = "text-center") No Files are shared by You !
+            else
+                h4(class = "text-center") Files you Shared.
+                table(class = "table" id = "shareTable")
+                    thead(class = "thead-dark")
+                        tr 
+                            th(scope = "col") #
+                            th(scope = "col") File Name
+                            th(scope = "col") Share To
+                            th(scope = "col") Share Time
+                            th(scope = "col") One-Time Only ?
+                            th(scope = "col") Available Now ?
+                    tbody
+                        each v, i in shared
+                            tr
+                                th(scope = "row") #{i}
+                                td #{v.fileName}
+                                td #{v.toEmail ? v.toEmail : "User ID: " + v.toUserID}
+                                td #{v.shareTime}
+                                td #{v.oneTime ? "Yes" : "No"}
+                                td #{v.valid ? "Yes" : "No"}
