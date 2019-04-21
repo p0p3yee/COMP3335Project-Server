@@ -1,7 +1,7 @@
 (function(){
     Dropzone.options.myDropzone = {
         paramName: "file",
-        maxFilesize: 50,
+        maxFilesize: 100,
         maxFiles: 5,
         dictDefaultMessage: "Drop Files or Click Here to Upload.<br>Maximum Size: <b>50 MB</b>",
         accept: (file, done) => {

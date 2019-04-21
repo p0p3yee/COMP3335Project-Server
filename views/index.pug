@@ -2,7 +2,37 @@ html
     include navbar
     body
         br
+        style.
+            .dropzone{
+                border: 3px dashed #343a40;
+                border-radius: 5px;
+                height: 80%
+            }
+        script(type = "text/javascript").
+            Dropzone.options.myDropzone = {
+                paramName: "file",
+                maxFilesize: 50,
+                dictDefaultMessage: "<h1 class = 'text-center'>G18Upload</h1><h3 class = 'text-center'>Upload Files for FREE</h3><hr>Drop Files or Click Here to Upload.<br>Maximum Size: <b>50 MB</b><br><small>File will be uploaded to IPFS Network.</small><br><small>File will not be encrypted and everyone have the URL can access it.</small><br><br><strong>Register for more function.</strong>",
+                fallback: () => alert("Your browser does not support dropzone..."),
+                init() {
+                    this.on("success", (file, res) => {
+                        if(res.error){
+                            $("#messages").append(`<div class = "alert alert-danger fade show" role = "alert">Error: ${res.error}</div>`)
+                            setTimeout(()=>$(".alert").alert("close"), 5000)
+                            return;
+                        }
+                        console.log(res.url);
+                        $("#messages").append(`<div class = "alert alert-success fade show" role = "alert" id = "${res.hash}">File Uploaded! URL:<br>${res.url}</div>`)
+                        setTimeout(()=>{
+                            $(`#${res.hash}`).alert("close")
+                        }, 15000)
+                    });
+                    this.on("maxfilesexceeded", file => this.removeFile(file))
+                }
+            };
         div(class = "container")
+            br
+            div(id = "messages")
             if successMessage != "" && typeof(successMessage) != "undefined"
                 div(class = "alert alert-success fade show" role="alert") #{successMessage}
             if failMessage != "" && typeof(failMessage) != "undefined"
@@ -10,10 +40,7 @@ html
             script(type = "text/javascript").
                 (() => setTimeout(()=>$(".alert").alert("close"), 3000))()
 
-            h1(class = "text-center") G18Upload
             br
-            h3(class = "text-center") Upload Files for FREE
-            br
-            h5(class = "text-center") Secure and Free File Uploading Site.
-            br
-            h6(class = "text-center") Register now and start uploading.
+            form(action = "/ipfs" class = "dropzone" id = "myDropzone" method = "post" enctype = "multipart/form-data")
+                div(class = "fallback")
+                    input(name = "file" type = "file" multiple)

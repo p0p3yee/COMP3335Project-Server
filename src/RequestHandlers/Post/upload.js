@@ -3,7 +3,7 @@ const path = require("path");
 const crypto = require("../../Encryption");
 const Database = require("../../Database");
 
-const MAX_SIZE = 52428800;
+const MAX_SIZE = 104857600;
 
 module.exports = async (req, res) => {
     if(req.user == null){

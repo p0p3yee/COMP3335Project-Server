@@ -4,6 +4,7 @@ const   upload = multer({
             dest: `${__dirname}/../../uploads`
         }),
         uploadHandler = require("../RequestHandlers/Post/upload"),
+        ipfsHandler = require("../RequestHandlers/Post/ipfs"),
         forgotHandler = require("../RequestHandlers/Post/forgot"),
         profileHandler = require("../RequestHandlers/Post/profile"),
         filesHandler = require("../RequestHandlers/Get/files"),
@@ -31,6 +32,7 @@ module.exports = (app, passport) => {
         successFlash: true
     }));
     app.post("/upload", upload.single("file"), uploadHandler);
+    app.post("/ipfs", upload.single("file"), ipfsHandler);
     app.post("/register", passport.authenticate("register", {
         successRedirect: "/profile",
         failureRedirect: "/register",
