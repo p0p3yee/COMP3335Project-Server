@@ -57,7 +57,7 @@ new Promise(async (resolve, reject) => {
     }))
     .catch(e => reject(e)));
 
-    this.getUserUploaded = id => new Promise((resolve, reject) => conn.execute(`SELECT id, orgName, extension, createTime, deleted, public From File Where ownerID = ?`, [id])
+    this.getUserUploaded = id => new Promise((resolve, reject) => conn.execute(`SELECT id, orgName, extension, createTime, deleted, public, link From File Where ownerID = ?`, [id])
     .then(v => {
         for(var i = 0; i < v[0].length; i++){
             v[0][i].createTime = new Date(parseInt(v[0][i].createTime)).toLocaleString();

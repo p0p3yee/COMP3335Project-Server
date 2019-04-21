@@ -1,6 +1,7 @@
 const Database = require("../../Database");
 
 module.exports = async (req, res) => {
+    console.log(req.body);
     if(isNaN(req.user.id) || isNaN(req.body.fileid)){
         req.flash("failMessage", "Incorrect Parameters.");
         return res.redirect("/files")

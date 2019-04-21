@@ -41,7 +41,7 @@ html
                                             button(class = "btn btn-dark deleteBtn" type = "submit") Delete
                                     td #{v.public ? "Public" : "Private"}
                                     td
-                                        button(class = "btn btn-dark" type = "button" data-toggle="modal" data-target="#shareBox" data-ispublic = v.public data-fileid = v.id data-filename = v.orgName) Setting
+                                        button(class = "btn btn-dark" type = "button" data-toggle="modal" data-target="#shareBox" data-link = v.link data-ispublic = v.public data-fileid = v.id data-filename = v.orgName) Setting
                 div(class = "modal fade" id = "shareBox" tabindex = "-1" role = "dialog" aria-labelledby = "shareBoxTitle" aria-hidden = "true")
                     div(class = "modal-dialog modal-dialog-centered" role = "document")
                         div(class = "modal-content")
@@ -53,12 +53,11 @@ html
                                 form(action="/files/update" method = "POST" id = "updateForm")
                                     input(type = "text" class = "form-control" id = "fileid" name = "fileid" hidden)
                                     div(class = "form-group")
-                                        label(class = "col-form-label") File Name:
+                                        h6(class = "col-form-label text-center") File Name:
                                         input(type = "text" class = "form-control" id = "filename" disabled)
                                     hr
                                     div(class = "form-group")
-                                        label(class = "col-form-label") Privcay Setting:
-                                        br
+                                        h6(class = "col-form-label text-center") Privcay Setting:
                                         div(class = "btn-group btn-group-toggle" data-toggle="buttons" style = "width: 100%")
                                             label(class = "btn btn-dark privateBtnClass")
                                                 input(type = "radio" name = "public" autocomplete = "off" value = "0")
@@ -72,17 +71,24 @@ html
                                         small +Public: Anyone get the link can access the file.
                                     hr
                                     div(class = "form-group")
-                                        label(class = "col-form-label") Share to other Users:
-                                    hr
-                                    div(class = "form-group")
-                                        label(class = "col-form-label") Access Link:
-                                        input(class = "form-control" id = "accessLink" type = "text" value = accessLink ? accessLink : "" disabled)
+                                        h6(class = "col-form-label text-center") Share to other Users:
+                                        label(class = "form-label") User ID(s):
+                                        input(hidden id = "totalUserShare" value = "1")
+                                        div(id = "shareUserIDGroup")
+                                            input(class = "form-control" type = "number" name = "userid1")
                                         br
-                                        button(class = "form-control btn btn-dark" id = "newLinkBtn" type = "button") Get New Access Link
+                                        button(class = "btn btn-dark form-control" type = "button" id = "moreUserBtn") More User
                                     hr
+                                div(class = "form-group")
+                                    h6(class = "col-form-label text-center") Access Link:
+                                    div(id = "accessLinkDiv")
+                                        input(class = "form-control" id = "accessLink" type = "text" value = accessLink ? accessLink : "" disabled)
+                                    br
+                                    button(id = "copyBTN" class = "form-control btn btn-dark copyBTN" data-clipboard-target = "#accessLink") Copy
+                                hr
                                 form(action = "/share/email" method = "POST")
                                     div(class = "form-group")
-                                        label(class = "col-form-label") Share via Email:
+                                        h6(class = "col-form-label text-center") Share via Email:
                                         input(name = "id" id = "shareEmailID" hidden)
                                         input(required type = "email" name = "receiverEmail" id = "receiverEmail" class = "form-control" placeholder = "Receiver Email")
                                         br
@@ -94,39 +100,57 @@ html
                             div(class = "modal-footer")
                                 button(type = "button" class = "btn btn-secondary" data-dismiss="modal") Close
                                 button(type = "button" class = "btn btn-success" id = "saveBtn") Save Changes
+                script(src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js")
                 script(type = "text/javascript").
+                    new ClipboardJS('.copyBtn');
+                    $(document).ready(() => {
+                        $("#totalUserShare")[0].value = 1;
+                    })
+                    $("#moreUserBtn").on("click", () => {
+                        $("#totalUserShare")[0].value = parseInt($("#totalUserShare")[0].value) + 1;
+                        var nowUser = $("#totalUserShare")[0].value;
+                        console.log(nowUser)
+                        var container = $("#shareUserIDGroup")[0];
+                        var newUser = document.createElement("input");
+                        newUser.name = `userid${nowUser}`
+                        newUser.type = "number";
+                        newUser.classList.add("form-control")
+                        
+                        container.appendChild(newUser);
+                    })
+                    $("#copyBTN").on("click", () => {
+                        $("#accessLink").removeAttr("disabled");
+                        setTimeout(() => {
+                            $("#accessLink").attr("disabled", true);
+                        }, 100)
+                        alert("Access Link Copied\n" + $("#accessLink").val());
+                    })
                     $("#shareBox").on("show.bs.modal", e => {
                         $("#fileid").val($(e.relatedTarget).data("fileid"))
                         $("#filename").val($(e.relatedTarget).data("filename"))
                         $("#shareEmailID").val($(e.relatedTarget).data("fileid"))
+                        if(!!$(e.relatedTarget).data("link")) $("#accessLink").val(`${window.location.origin}/download/${$(e.relatedTarget).data("link")}`);
                         $($(e.relatedTarget).data("ispublic") == "0" ? ".privateBtnClass" : ".publicBtnClass").addClass("active");
+                        if(!!!$(e.relatedTarget).data("link"))
+                            $.ajax({
+                                type: "POST",
+                                url: "/files/getLink",
+                                data: {
+                                    id: $("#fileid").val()
+                                },
+                                success: r => {
+                                    var url = `${window.location.origin}/download/${r.result}`;
+                                    console.log("test");
+                                    $("#accessLink").val(url)
+                                    //- $("#copyBTN").attr("data-clipboard-text", url)
+                                },
+                                error: err => {
+                                    alert("Failed to get Access Link\n" + err)
+                                }
+                            }, )
                     })
                     $("#saveBtn").on("click", () => {
                         $("#updateForm").submit();
-                    })
-                    $("#newLinkBtn").on("click", () => {
-                        $.ajax({
-                            type: "POST",
-                            url: "/files/getLink",
-                            data: {
-                                id: $("#fileid").val()
-                            },
-                            success: r => {
-                                console.log(r)
-                                $("#accessLink").val(`/${r.result}`)
-                            },
-                            error: err => {
-                                alert("Try again Later...\n" + err)
-                            }
-                        }, )
-                    })
-                    $("#accessLink").on("click", () => {
-                        console.log(document.getElementById("accessLink"))
-                        var link = document.getElementById("accessLink");
-                        if(!!!link.value)return;
-                        link.select();
-                        document.execCommand("copy");
-                        alert("Link Copied !\n" + link.value);
                     })
             hr
             if noshare
