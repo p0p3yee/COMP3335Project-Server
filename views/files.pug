@@ -23,7 +23,7 @@ html
             if successMessage != "" && typeof(successMessage) != "undefined"
                 div(class = "alert alert-success fade show" role="alert") #{successMessage}
             if failMessage != "" && typeof(failMessage) != "undefined"
-                div(class = "alert alert-danger" role="alert") #{failMessage}
+                div(class = "alert alert-danger fade show" role="alert") #{failMessage}
             script(type = "text/javascript").
                 (() => setTimeout(()=>$(".alert").alert("close"), 5000))()
             if noupload
@@ -144,7 +144,7 @@ html
                                 error: err => {
                                     alert("Failed to get Access Link\n" + err)
                                 }
-                            }, )
+                            })
                     })
                     $("#saveBtn").on("click", () => {
                         $("#updateForm").submit();

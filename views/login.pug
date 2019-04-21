@@ -43,7 +43,7 @@ html
                 script(type = "text/javascript").
                     (() => setTimeout(()=>$(".alert").alert("close"), 3000))()
             if successMessage != "" && typeof(successMessage) != "undefined"
-                div(class = "alert alert-success" role="alert") #{successMessage}
+                div(class = "alert alert-success fade show" role="alert") #{successMessage}
             div(class = "row")
                 aside(class ="col-sm")
                 div(class="card col-sm")

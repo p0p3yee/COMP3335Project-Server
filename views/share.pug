@@ -3,10 +3,11 @@ html
     body
         div(class = "container")
             br
+            div(id = "messages")
             if successMessage != "" && typeof(successMessage) != "undefined"
                 div(class = "alert alert-success fade show" role="alert") #{successMessage}
             if failMessage != "" && typeof(failMessage) != "undefined"
-                div(class = "alert alert-danger" role="alert") #{failMessage}
+                div(class = "alert alert-danger fade show" role="alert") #{failMessage}
             script(type = "text/javascript").
                 (() => setTimeout(()=>$(".alert").alert("close"), 5000))()
                 $(document).ready( () => {
@@ -17,11 +18,38 @@ html
                         "pageLength": 10
                     });
                 });
+                function Setting(id){
+                    $.ajax({
+                        type: "POST",
+                        url: "/share/update",
+                        data: {
+                            id: id
+                        },
+                        success: r => {
+                            if(r.error){
+                                $("#messages").append(`<div class = "alert alert-danger fade show" role = "alert">${r.error}</div>`)
+                                setTimeout(()=>$(".alert").alert("close"), 5000)
+                                return;
+                            }
+                            $("#messages").append(`<div class = "alert alert-success fade show" role = "alert">Setting Updated. Page will be Refreshed.</div>`)
+                            setTimeout(()=>{
+                                $(".alert").alert("close")
+                                location.reload();
+                            }, 1000)
+                        },
+                        error: err => {
+                            console.log("Error: ", err);
+                        }
+                    })
+                }
             if noShare
                 div(class = "alert alert-warning") You haven't share any files !
                 h1(class = "text-center") No Files are shared by You !
             else
-                h4(class = "text-center") Files you Shared.
+                h4(class = "text-center") Sharing History
+                small + One-Time only File are not allowed to Stop Share.
+                br
+                br
                 table(class = "table" id = "shareTable")
                     thead(class = "thead-dark")
                         tr 
@@ -30,7 +58,8 @@ html
                             th(scope = "col") Share To
                             th(scope = "col") Share Time
                             th(scope = "col") One-Time Only ?
-                            th(scope = "col") Available Now ?
+                            th(scope = "col") Still Available ?
+                            th(scope = "col") Setting
                     tbody
                         each v, i in shared
                             tr
@@ -40,3 +69,6 @@ html
                                 td #{v.shareTime}
                                 td #{v.oneTime ? "Yes" : "No"}
                                 td #{v.valid ? "Yes" : "No"}
+                                td
+                                    button(class = "btn form-control btn-dark" onClick = `Setting(${v.shareID})`, disabled = v.oneTime==1) #{v.valid ? "Stop Share" : "Start Share"}
+

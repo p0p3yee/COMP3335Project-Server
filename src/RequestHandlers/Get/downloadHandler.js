@@ -64,7 +64,7 @@ module.exports = async (req, res) => {
     }
 
     for(var i = 0; i < Share.length; i ++){
-        if(Share[i].toUserID == req.user.id){
+        if(Share[i].toUserID == req.user.id && Share[i].valid){
             return returnFile(req, res, inPath, outPath, `${Owner.password}@${File.createTime}`, iv);
         }
     }

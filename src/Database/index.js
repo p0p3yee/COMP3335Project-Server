@@ -122,11 +122,7 @@ new Promise(async (resolve, reject) => {
     .then(r => resolve(r[0].affectedRows))
     .catch(e => reject(e)));
 
-    this.setShareValid = (shareID, valid) => new Promise((resolve, reject) => conn.execute(`UPDATE Share SET valid = ? WHERE id = ?`, [valid, shareID])
-    .then(v => resolve(v[0].affectedRows))
-    .catch(e => reject(e)));
-
-    this.setShareOneTime = (shareID, onetime) => new Promise((resolve, reject) => conn.execute(`UPDATE Share SET onetime = ? WHERE id = ?`, [onetime, shareID])
+    this.flipShareValid = shareID => new Promise((resolve, reject) => conn.execute(`UPDATE Share SET valid = NOT valid WHERE id = ?`, [shareID])
     .then(v => resolve(v[0].affectedRows))
     .catch(e => reject(e)));
 })

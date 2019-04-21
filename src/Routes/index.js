@@ -1,19 +1,20 @@
 const multer = require('multer');
 
-const uploadHandler = require("../RequestHandlers/Post/upload");
-const forgotHandler = require("../RequestHandlers/Post/forgot");
-const profileHandler = require("../RequestHandlers/Post/profile");
-const filesHandler = require("../RequestHandlers/Get/files");
-const shareViaEmail = require("../RequestHandlers/Post/shareViaEmail");
-const fileDeleteHandler = require("../RequestHandlers/Post/fileDelete");
-const fileUpdateHandler = require("../RequestHandlers/Post/fileUpdate");
-const downloadHandler = require("../RequestHandlers/Get/downloadHandler");
-const getLinkHandler = require("../RequestHandlers/Post/getLinkHandler");
-const shareHandler = require("../RequestHandlers/Get/shareHandler");
-const sharePageHandler = require("../RequestHandlers/Get/sharePageHandler");
-const upload = multer({
-    dest: `${__dirname}/../../uploads`
-});
+const   upload = multer({
+            dest: `${__dirname}/../../uploads`
+        }),
+        uploadHandler = require("../RequestHandlers/Post/upload"),
+        forgotHandler = require("../RequestHandlers/Post/forgot"),
+        profileHandler = require("../RequestHandlers/Post/profile"),
+        filesHandler = require("../RequestHandlers/Get/files"),
+        shareViaEmail = require("../RequestHandlers/Post/shareViaEmail"),
+        fileDeleteHandler = require("../RequestHandlers/Post/fileDelete"),
+        fileUpdateHandler = require("../RequestHandlers/Post/fileUpdate"),
+        downloadHandler = require("../RequestHandlers/Get/downloadHandler"),
+        getLinkHandler = require("../RequestHandlers/Post/getLinkHandler"),
+        shareHandler = require("../RequestHandlers/Get/shareHandler"),
+        sharePageHandler = require("../RequestHandlers/Get/sharePageHandler"),
+        shareUpdateHandler = require("../RequestHandlers/Post/shareUpdateHandler");
 
 const loggedIn = (req, res, next) => req.user ? res.redirect("/profile") : next();
 const authed = (req, res, next) =>{
@@ -71,6 +72,7 @@ module.exports = (app, passport) => {
     app.get("/files", authed, filesHandler)
     app.post("/files/delete", authed, fileDeleteHandler)
     app.post("/files/update", authed, fileUpdateHandler);
+    app.post("/share/update", authed, shareUpdateHandler);
     app.post("/share/email", authed, shareViaEmail)
     app.post("/files/getLink", (req, res, next) => {
         if(req.isAuthenticated()) return next();
