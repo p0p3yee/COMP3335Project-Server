@@ -10,12 +10,20 @@ const express = require("express"),
 
 const app = express();
 
+const keyPath = `${__dirname}/certs/server.key`,
+    certPath = `${__dirname}/certs/server.cert`;
+let useHTTPS = false, 
+    server = null;
+
 require("../Passport")(passport);
 
-const server = https.createServer({
-    key: fs.readFileSync(`${__dirname}/certs/server.key`),
-    cert: fs.readFileSync(`${__dirname}/certs/server.cert`)
-}, app);
+if(fs.existsSync(keyPath) && fs.existsSync(certPath)){
+    useHTTPS = true;
+    server = https.createServer({
+        key: fs.readFileSync(`${__dirname}/certs/server.key`),
+        cert: fs.readFileSync(`${__dirname}/certs/server.cert`)
+    }, app);
+}
 
 app.set("view engine", "pug");
 app.use("/public", express.static(`${__dirname}/public`));
@@ -38,7 +46,7 @@ require("../Routes")(app, passport);
 
 /* Public Functions */
 module.exports = {
-    start: () => server.listen(process.env.PORT || 443, () => console.log(`Server Started, Listening on: ${process.env.PORT}`)),
+    start: () => useHTTPS ? server.listen(process.env.PORT || 443, () => console.log(`**HTTPS** Server Started, Listening on: ${process.env.PORT || 443}`)) : app.listen(process.env.PORT || 80, () => console.log(`**HTTP** Server Started, Listening on: ${process.env.PORT || 80}`)),
     app: app,
     port: process.env.PORT,
     use: obj => app.use(obj)
