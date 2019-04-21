@@ -36,7 +36,7 @@ module.exports = async (req, res) => {
 
     const iv = Buffer.from(File.iv.toString("hex"), "hex");
 
-    if(File.public == 0 && (req.user == null || (req.user.id != File.ownerID))){
+    if(File.public == 0 && req.user == null){
         req.flash("failMessage", "You are not allowed to access the file.");
         return res.redirect("/")
     }

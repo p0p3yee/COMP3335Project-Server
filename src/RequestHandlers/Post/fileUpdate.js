@@ -1,8 +1,6 @@
 const Database = require("../../Database");
 
 module.exports = async (req, res) => {
-  
-    const keys = Object.keys(req.body);
 
     if(req.user == null){
         req.flash("failMessage", "Please Login First.");
@@ -31,26 +29,37 @@ module.exports = async (req, res) => {
         if(req.body.public != null){
             await Database.setFilePublicByID(req.body.fileid, req.body.public == "0" ? 0 : 1);
         }
-        var hvNotExistsUser = [];
-        for(var i = 0; i < keys.length - 1; i++){
-            if(keys[i] == "fileid") continue;
-            if(!keys[i].includes("userid")) continue;
-            var nowID = req.body[keys[i]];
-            if(isNaN(nowID)) continue;
-            if(nowID == req.body.id) continue;
-            var nowUser = await Database.getUserByID(nowID);
-            if(nowUser == null) {
-                hvNotExistsUser.push(nowID);
-                continue;
-            }
-            var alreadyShared = await Database.getShareByVars(req.user.id, nowID, req.body.fileid);
-            if(alreadyShared.length == 0) await Database.createShareToUser(req.user.id, req.body.fileid, nowID);
+
+        if(req.body.userid == ""){
+            req.flash("successMessage", `File Sharing Setting Updated.`);
+            return res.redirect("/files");
+        }
+
+        if(isNaN(req.body.userid)){
+            req.flash("failMessage", "Error: Incorrect User ID.");
+            return res.redirect("/files");
+        }
+
+        if(req.body.userid == req.user.id){
+            req.flash("failMessage", "Error: You can't share the file to yourself.");
+            return res.redirect("/files");
+        }
+
+        const nowUser = await Database.getUserByID(req.body.userid);
+        if(nowUser == null) {
+            req.flash("failMessage", `Error: User ID: ${req.body.userid}, do not Exists.`);
+            return res.redirect("/files");
+        }
+
+        const alreadyShared = await Database.getShareByVars(req.user.id, req.body.userid, req.body.fileid);
+        if(alreadyShared.length != 0) {
+            req.flash("failMessage", `Error: File already shared to User ID: ${req.body.userid} .`);
+            return res.redirect("/files");
         }
         
-        req.flash("successMessage", "File Sharing Setting Updated.");
-        if(hvNotExistsUser.length > 0){
-            req.flash("failMessage", "These User do not exists: " + hvNotExistsUser.join(", "));
-        }
+        const result = await Database.createShareToUser(req.user.id, req.body.fileid, req.body.userid);
+        
+        req.flash("successMessage", `File Sharing Setting Updated. ${result > 0 ? "File Shared to User ID: " + req.body.userid : ""}`);
         return res.redirect("/files");
     }catch(e){
         console.log(e);

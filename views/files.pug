@@ -1,6 +1,13 @@
 html
     include navbar
     body
+        script(src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js")
+        script(type = "text/javascript").
+            new ClipboardJS('.copyBtn');
+            var shareClip = new ClipboardJS('.shareCopyBtn');
+            shareClip.on("success", e => {
+                alert("Access Link Copied !\n" + e.text)
+            })
         br
         div(class = "container")
             if successMessage != "" && typeof(successMessage) != "undefined"
@@ -71,13 +78,9 @@ html
                                         small +Public: Anyone get the link can access the file.
                                     hr
                                     div(class = "form-group")
-                                        h6(class = "col-form-label text-center") Share to other Users:
-                                        label(class = "form-label") User(s) ID:
-                                        input(hidden id = "totalUserShare" value = "1")
-                                        div(id = "shareUserIDGroup")
-                                            input(class = "form-control" type = "number" name = "userid1")
+                                        h6(class = "col-form-label text-center") Share to other User (ID):
+                                        input(class = "form-control" type = "number" name = "userid" id = "onlyUserID" placeholder = "User ID")
                                         br
-                                        button(class = "btn btn-dark form-control" type = "button" id = "moreUserBtn") More User
                                     hr
                                 div(class = "form-group")
                                     h6(class = "col-form-label text-center") Access Link:
@@ -100,28 +103,7 @@ html
                             div(class = "modal-footer")
                                 button(type = "button" class = "btn btn-secondary" data-dismiss="modal") Close
                                 button(type = "button" class = "btn btn-success" id = "saveBtn") Save Changes
-                script(src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.0/clipboard.min.js")
                 script(type = "text/javascript").
-                    new ClipboardJS('.copyBtn');
-                    $(document).ready(() => {
-                        $("#totalUserShare")[0].value = 1;
-                    })
-                    $("#moreUserBtn").on("click", () => {
-                        if(parseInt($("#totalUserShare")[0].value) >= 5){
-                            alert("Maximum 5 Users each time.")
-                            return;
-                        }
-                        $("#totalUserShare")[0].value = parseInt($("#totalUserShare")[0].value) + 1;
-                        var nowUser = $("#totalUserShare")[0].value;
-                        console.log(nowUser)
-                        var container = $("#shareUserIDGroup")[0];
-                        var newUser = document.createElement("input");
-                        newUser.name = `userid${nowUser}`
-                        newUser.type = "number";
-                        newUser.classList.add("form-control")
-                        
-                        container.appendChild(newUser);
-                    })
                     $("#copyBTN").on("click", () => {
                         $("#accessLink").removeAttr("disabled");
                         setTimeout(() => {
@@ -135,13 +117,7 @@ html
                         $("#shareEmailID").val($(e.relatedTarget).data("fileid"))
                         if(!!$(e.relatedTarget).data("link")) $("#accessLink").val(`${window.location.origin}/download/${$(e.relatedTarget).data("link")}`);
                         $($(e.relatedTarget).data("ispublic") == "0" ? ".privateBtnClass" : ".publicBtnClass").addClass("active");
-                        var len = $("#shareUserIDGroup").children().length;
-                        while(len > 1){
-                            $("#shareUserIDGroup").children()[1].remove()
-                            len = $("#shareUserIDGroup").children().length;
-                        }
-                        $("#totalUserShare")[0].value = 1;
-                        $("#shareUserIDGroup").children()[0].value = "";
+                        $("#onlyUserID").val("");
                         if(!!!$(e.relatedTarget).data("link"))
                             $.ajax({
                                 type: "POST",
@@ -168,5 +144,25 @@ html
                 div(class = "alert alert-warning") No File Shared to you !
             else
                 h4(class = "text-center") Files Shared to You. 
+                table(class = "table")
+                    thead(class = "thead-dark")
+                        tr 
+                            th(scope = "col") #
+                            th(scope = "col") File Name
+                            th(scope = "col") Shared By(User ID)
+                            th(scope = "col") Open Now
+                            th(scope = "col") Access Link
+                    tbody
+                        -
+                            var currentLink = "";
+                        each v, i in sharedFiles
+                            tr
+                                th(scope = "row") #{i}
+                                td #{v.orgName}
+                                td #{v.ownerID}
+                                td
+                                    a(target = "_blank" href = v.shareAccessLink class = "btn btn-dark form-control" role = "button" aria-pressed = "true") Open
+                                td
+                                    button(class = "form-control btn btn-dark shareCopyBtn" data-clipboard-text = v.shareAccessLink) Copy
             if noshare && noupload
                 h1(class = "text-center") No File Uploaded & Shared.
