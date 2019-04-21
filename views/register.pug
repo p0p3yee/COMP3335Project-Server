@@ -33,9 +33,13 @@ html
     include navbar
     body
         script(src = "/public/bcrypt.min.js")
+        script(src = "https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.js")
         script(type = "text/javascript").
-            const hit = v => dcodeIO.bcrypt.hashSync(String(v), dcodeIO.bcrypt.genSaltSync(10));
-            window.onload = () => $("#registerForm").submit(() => $("#registerPassword").val(hit($("#registerPassword").val())));
+            const hit = v => dcodeIO.bcrypt.hashSync(sha256(String(v)), dcodeIO.bcrypt.genSaltSync(10));
+            window.onload = () => $("#registerForm").submit(() => {
+                $("#registerPassword").val(hit($("#registerPassword").val()))
+                $("#registerConfPassword").val(sha256($("#registerConfPassword").val()));
+            });
         br
         br
         div(class = "container")

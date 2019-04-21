@@ -48,6 +48,10 @@ You can change the PORT 8080 to any other port you like.
 
 3. Put your self-signed / ca signed certificates in side `src/Server/certs` and name it `server.cert` and `server.key`
 
+### Libraries
+
+Make sure you have `build-essential` installed in your OS.
+
 ## Build and Run
 
 First Run: `npm install`

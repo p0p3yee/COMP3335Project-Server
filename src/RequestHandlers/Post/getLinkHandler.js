@@ -26,8 +26,7 @@ module.exports = async (req, res) => {
 
     if(file.link == null || !!!file.link){
         
-        const fileLink = `${file.name.split("-enc")[0]}${crypto.randHex(16)}`;
-        console.log(fileLink);
+        const fileLink = crypto.sha256(`${file.name.split("-enc")[0]}${crypto.randHex(16)}`);
         const r = await Database.setLinkByFileID(req.body.id, fileLink);
         if(r >= 1){
             return res.json({

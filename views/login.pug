@@ -34,6 +34,9 @@ html
     body
         br
         br
+        script(src = "https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.js")
+        script(type = "text/javascript").
+            window.onload = () => $("#loginForm").submit(() => $("#loginPassword").val(sha256($("#loginPassword").val())));
         div(class = "container")
             if message != "" && typeof(message) != "undefined"
                 div(class = "alert alert-danger fade show" role="alert") #{message}

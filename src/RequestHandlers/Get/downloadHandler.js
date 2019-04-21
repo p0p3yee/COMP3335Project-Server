@@ -11,10 +11,11 @@ async function returnFile(req, res, inPath, outPath, secret, iv){
         if(!await fs.exists(inPath)) {
             throw new Error();
         }
-        const md5edSecret = encryption.md5(secret);
-        await encryption.decryptFile(iv, encryption.getKeyBySecret(md5edSecret), fs.createReadStream(inPath), fs.createWriteStream(outPath));
+        const sha256edSecret = encryption.sha256(secret);
+        await encryption.decryptFile(iv, encryption.getKeyBySecret(sha256edSecret), fs.createReadStream(inPath), fs.createWriteStream(outPath));
         return res.sendFile(outPath);
     }catch(e){
+        console.log(e);
         req.flash("failMessage", "File Deleted.");
         return res.redirect("/")
     }   

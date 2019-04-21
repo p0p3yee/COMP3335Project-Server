@@ -98,12 +98,36 @@ new Promise(async (resolve, reject) => {
     .then(v => resolve(v[0][0]))
     .catch(e => reject(e)));
 
-    this.setLinkByFileID = (id, link) =>  new Promise((resolve, reject) => conn.execute(`UPDATE File SET link = ? WHERE id = ?`, [link, id])
+    this.getShareByVars = (ownerID, toUserID, fileID) => new Promise((resolve, reject) => conn.execute(`SELECT * FROM Share WHERE ownerID = ? and fileID = ? and toUserID = ?`, [ownerID, fileID, toUserID])
+    .then(v => resolve(v[0]))
+    .catch(e => reject(e)));
+
+    this.getShareByEmailVars = (ownerID, email, fileID) => new Promise((resolve, reject) => conn.execute(`SELECT * FROM Share WHERE ownerID = ? and fileID = ? and email = ? and onetime = 0`, [ownerID, fileID, email])
+    .then(v => resolve(v[0]))
+    .catch(e => reject(e)));
+
+    this.setLinkByFileID = (id, link) => new Promise((resolve, reject) => conn.execute(`UPDATE File SET link = ? WHERE id = ?`, [link, id])
     .then(v => resolve(v[0].affectedRows))
     .catch(e => reject(e)));
 
     this.getFileByLink = link => new Promise((resolve, reject) => conn.execute(`SELECT * FROM File WHERE link = ?`, [link])
     .then(v => resolve(v[0][0]))
+    .catch(e => reject(e)));
+
+    this.createShareToUser = (ownerID, fileID, toUserID) => new Promise((resolve, reject) => conn.execute(`INSERT INTO Share(ownerID, fileID, toUserID) VALUES (?, ?, ?)`, [ownerID, fileID, toUserID])
+    .then(r => resolve(r[0].affectedRows))
+    .catch(e => reject(e)));
+
+    this.createShareViaEmail = (ownerID, fileID, email, hash, onetime) => new Promise((resolve, reject) => conn.execute(`INSERT INTO Share(ownerID, fileID, email, hash, onetime) VALUES (?, ?, ?, ?, ?)`, [ownerID, fileID, email, hash, onetime])
+    .then(r => resolve(r[0].affectedRows))
+    .catch(e => reject(e)));
+
+    this.setShareValid = (shareID, valid) => new Promise((resolve, reject) => conn.execute(`UPDATE Share SET valid = ? WHERE id = ?`, [valid, shareID])
+    .then(v => resolve(v[0].affectedRows))
+    .catch(e => reject(e)));
+
+    this.setShareOneTime = (shareID, onetime) => new Promise((resolve, reject) => conn.execute(`UPDATE Share SET onetime = ? WHERE id = ?`, [onetime, shareID])
+    .then(v => resolve(v[0].affectedRows))
     .catch(e => reject(e)));
 })
 .catch(e => {

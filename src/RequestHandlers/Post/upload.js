@@ -69,7 +69,7 @@ module.exports = async (req, res) => {
 
     try{
         const now = Date.now();
-        const iv = await crypto.encryptFile(crypto.md5(`${req.user.password}@${now}`), fs.createReadStream(req.file.path), fs.createWriteStream(saveAs));
+        const iv = await crypto.encryptFile(crypto.sha256(`${req.user.password}@${now}`), fs.createReadStream(req.file.path), fs.createWriteStream(saveAs));
         await fs.unlink(req.file.path);
         const dbResult = await Database.uploadFile(req.user.id, iv, now, req.file.mimetype, path.basename(saveAs), path.extname(req.file.originalname), req.file.originalname);
         if(dbResult.affectedRows >= 1){

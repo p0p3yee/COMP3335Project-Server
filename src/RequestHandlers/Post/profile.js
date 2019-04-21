@@ -1,8 +1,6 @@
 const Database = require("../../Database");
 const crypto = require("../../Encryption");
 module.exports = async (req, res) => {
-    console.log(req.body);
-
     if(isNaN(req.body.id)){
         req.flash("profileMessage", "Error: User ID invalid.");
         return res.redirect("/profile");

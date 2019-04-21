@@ -22,7 +22,6 @@ module.exports = new localStrategy({
         return done(null, user);
 
     }catch(e){
-        console.log(e);
         return done(null, false, req.flash("loginMessage", "ERROR: Some Error occured, Try again later."))
     }
     

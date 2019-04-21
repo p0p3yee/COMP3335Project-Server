@@ -72,7 +72,7 @@ html
                                     hr
                                     div(class = "form-group")
                                         h6(class = "col-form-label text-center") Share to other Users:
-                                        label(class = "form-label") User ID(s):
+                                        label(class = "form-label") User(s) ID:
                                         input(hidden id = "totalUserShare" value = "1")
                                         div(id = "shareUserIDGroup")
                                             input(class = "form-control" type = "number" name = "userid1")
@@ -107,6 +107,10 @@ html
                         $("#totalUserShare")[0].value = 1;
                     })
                     $("#moreUserBtn").on("click", () => {
+                        if(parseInt($("#totalUserShare")[0].value) >= 5){
+                            alert("Maximum 5 Users each time.")
+                            return;
+                        }
                         $("#totalUserShare")[0].value = parseInt($("#totalUserShare")[0].value) + 1;
                         var nowUser = $("#totalUserShare")[0].value;
                         console.log(nowUser)
@@ -131,6 +135,13 @@ html
                         $("#shareEmailID").val($(e.relatedTarget).data("fileid"))
                         if(!!$(e.relatedTarget).data("link")) $("#accessLink").val(`${window.location.origin}/download/${$(e.relatedTarget).data("link")}`);
                         $($(e.relatedTarget).data("ispublic") == "0" ? ".privateBtnClass" : ".publicBtnClass").addClass("active");
+                        var len = $("#shareUserIDGroup").children().length;
+                        while(len > 1){
+                            $("#shareUserIDGroup").children()[1].remove()
+                            len = $("#shareUserIDGroup").children().length;
+                        }
+                        $("#totalUserShare")[0].value = 1;
+                        $("#shareUserIDGroup").children()[0].value = "";
                         if(!!!$(e.relatedTarget).data("link"))
                             $.ajax({
                                 type: "POST",

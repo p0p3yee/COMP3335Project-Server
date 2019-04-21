@@ -3,7 +3,19 @@ html
     body
         br
         br
+        script(src = "https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.js")
         script(src = "/public/bcrypt.min.js")
+        script(type = "text/javascript").
+            window.onload = () => {
+                $("#profileForm").submit(() => {
+                    $("#oldPassword").val(sha256($("#oldPassword").val()));
+                    $("#newPassword").val(sha256($("#newPassword").val()));
+                });
+
+                $("#activeForm").submit(() => {
+                    $("#ownpassword").val(sha256($("#ownpassword").val()));
+                });
+            }
         div(class = "container")
             if message != "" && typeof(message) != "undefined"
                 div(class = "alert alert-danger fade show" role="alert") #{message}
