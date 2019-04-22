@@ -34,7 +34,7 @@ html
             br
             div(id = "messages")
             if successMessage != "" && typeof(successMessage) != "undefined"
-                div(class = "alert alert-success fade show" role="alert") #{successMessage}
+                div(class = "alert alert-success" role="alert") #{successMessage}
             if failMessage != "" && typeof(failMessage) != "undefined"
                 div(class = "alert alert-danger fade show" role="alert") #{failMessage}
             script(type = "text/javascript").

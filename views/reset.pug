@@ -1,0 +1,37 @@
+html
+    head
+    include navbar
+    body
+        script(src = "/public/bcrypt.min.js")
+        script(src = "https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.js")
+        script(type = "text/javascript").
+            const hit = v => dcodeIO.bcrypt.hashSync(sha256(String(v)), dcodeIO.bcrypt.genSaltSync(10));
+            window.onload = () => $("#resetForm").submit(() => {
+                $("#newResetPassword").val(hit($("#newResetPassword").val()))
+                $("#newConfResetPassword").val(sha256($("#newConfResetPassword").val()));
+            });
+        br
+        br
+        div(class = "container")
+            br
+            if failMessage != "" && typeof(failMessage) != "undefined"
+                div(class = "alert alert-danger fade show" role="alert") #{failMessage}
+            script(type = "text/javascript").
+                (() => setTimeout(()=>$(".alert").alert("close"), 3000))()
+            div(class = "row")
+                aside(class ="col-sm")
+                div(class="card col-sm")
+                    article(class="card-body")
+                    h4(class="card-title mb-4 mt-1 text-center") Password Reset
+                    form(method = "POST" action = "/reset" id = "resetForm")
+                        input(name = "hash" class = "form-control" value = hash hidden)
+                        div(class="form-group")
+                            label New Password: 
+                            input(id = "newResetPassword" name = "password" class = "form-control" placeholder = "New Password" type = "password" minlength = "8" maxlength = "20" required) 
+                        div(class="form-group")
+                            label Confirm Password: 
+                            input(id = "newConfResetPassword" name = "confPassword" class = "form-control" placeholder = "Confirm New Password" type = "password" minlength = "8" maxlength = "20" required) 
+                        hr
+                        div(class="form-group")
+                            button(typ = "submit" class = "btn btn-dark btn-block") Reset
+                div(class = "col-sm")

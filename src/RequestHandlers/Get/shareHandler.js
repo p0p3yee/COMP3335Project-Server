@@ -41,6 +41,12 @@ module.exports = async (req, res) => {
         const sha256edSecret = encryption.sha256(secret);
         await encryption.decryptFile(iv, encryption.getKeyBySecret(sha256edSecret), fs.createReadStream(inPath), fs.createWriteStream(outPath));
         if(Share.onetime) await Database.setShareValid(Share.id, 0);
+        setTimeout(async () => {
+            try{
+                const link = outPath;
+                await fs.unlink(link);
+            }catch(e){}
+        }, 1000 * 60 * 15);
         return res.sendFile(outPath);
     }catch(e){
         console.log(e);

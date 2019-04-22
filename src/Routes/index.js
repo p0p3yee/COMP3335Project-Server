@@ -6,6 +6,8 @@ const   upload = multer({
         uploadHandler = require("../RequestHandlers/Post/upload"),
         ipfsHandler = require("../RequestHandlers/Post/ipfs"),
         forgotHandler = require("../RequestHandlers/Post/forgot"),
+        resetRequestHandler = require("../RequestHandlers/Post/resetRequestHandler"),
+        resetPageHandler = require("../RequestHandlers/Get/reset"),
         profileHandler = require("../RequestHandlers/Post/profile"),
         filesHandler = require("../RequestHandlers/Get/files"),
         shareViaEmail = require("../RequestHandlers/Post/shareViaEmail"),
@@ -38,11 +40,26 @@ module.exports = (app, passport) => {
         failureFlash: true,
         successFlash: true
     }))
-    app.post("/forgot", forgotHandler);
+    app.post("/reset", (req, res, next) => {
+        if(!req.isAuthenticated()) return next();
+        req.flash("failMessage", "ERROR: You are not allowed to do that.");
+        res.redirect("/")
+    }, resetRequestHandler);
+    app.get("/reset/:hash", (req, res, next) => {
+        if(!req.isAuthenticated()) return next();
+        req.flash("failMessage", "ERROR: You are not allowed to do that.");
+        res.redirect("/")
+    }, resetPageHandler);
+    app.post("/forgot", (req, res, next) => {
+        if(!req.isAuthenticated()) return next();
+        req.flash("failMessage", "ERROR: You are not allowed to do that.");
+        res.redirect("/")
+    }, forgotHandler);
     app.post("/profile", (req, res, next) => req.user ? next() : res.redirect("/login"), profileHandler);
     app.get("/", (req, res) => res.render("index", {
         user: req.user,
-        failMessage: req.flash("failMessage")
+        failMessage: req.flash("failMessage"),
+        successMessage: req.flash("successMessage")
     }))
     app.get("/upload", authed, (req, res) => res.render("upload", {
         user: req.user

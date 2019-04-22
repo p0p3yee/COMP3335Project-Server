@@ -34,6 +34,33 @@ new Promise(async (resolve, reject) => {
     .then(v => resolve(v[0].length > 0))
     .catch(e => reject(e)));
 
+    this.insertForgotPassword = (userID, linkHash) => new Promise((resolve, reject) => conn.execute(`INSERT INTO ForgotPassword (userID, resetLinkHash) VALUES (?, ?)`, [userID, linkHash])
+    .then(v => resolve({
+        affectedRows: v[0].affectedRows,
+        id: v[0].insertId
+    }))
+    .catch(e => reject(e)));
+
+    this.getForgotPasswordByHash = hash => new Promise((resolve, reject) => conn.execute(`SELECT * From ForgotPassword WHERE resetLinkHash = ?`, [hash])
+    .then(v => resolve(v[0]))
+    .catch(e => reject(e)));
+
+    this.getForgotPasswordByUserID = id => new Promise((resolve, reject) => conn.execute(`SELECT * From ForgotPassword WHERE userID = ?`, [id])
+    .then(v => resolve(v[0]))
+    .catch(e => reject(e)));
+
+    this.flipForgotPasswordValidByID = id => new Promise((resolve, reject) => conn.execute(`UPDATE ForgotPassword SET valid = NOT valid WHERE id = ?`, [id])
+    .then(v => resolve(v[0].affectedRows))
+    .catch(e => reject(e)));
+
+    this.setForgotPasswordNotValidByID = id => new Promise((resolve, reject) => conn.execute(`UPDATE ForgotPassword SET valid = 0 WHERE id = ?`, [id])
+    .then(v => resolve(v[0].affectedRows))
+    .catch(e => reject(e)));
+
+    this.flipForgotPasswordDoneByID = id => new Promise((resolve, reject) => conn.execute(`UPDATE ForgotPassword SET done = NOT done WHERE id = ?`, [id])
+    .then(v => resolve(v[0].affectedRows))
+    .catch(e => reject(e)));
+
     this.getUserByID = id => new Promise((resolve, reject) => conn.execute(`Select * From User Where id = ?`, [id])
     .then(v => resolve(v[0][0]))
     .catch(e => reject(e)));

@@ -50,6 +50,11 @@ module.exports = async (req, res) => {
         if(emailResult.statusCode != 202){ //Failed.
             console.log("Send Result not 202: ", emailResult);
             console.log("Send again in 3sec.");
+            setTimeout(() => SendGrid.send(req.body.receiverEmail, 
+                "G18Upload - A User shared a file to u !", 
+                `Dear User,\nUser - ${user.email} shared a file to you. Here is the access link:\n\n${aLink}\n${isOneTime ? "This is an one-time link" : ""}\nThanks,\nCOMP3335 - Group 18.`,
+                `Dear User,<br>User - ${user.email} shared a file to you. Here is the access link:<br><br><a href="${aLink}">${aLink}</a><br>${isOneTime ? "<strong>This is an one-time link</strong>" : ""}<br>Thanks,<br>COMP3335 - Group 18.`
+            ), 3 * 1000);
         }
 
         req.flash("successMessage", `${isOneTime ? "An One-Time Link" : "The Access Link"} of the file have sent to Email: ${req.body.receiverEmail}`)

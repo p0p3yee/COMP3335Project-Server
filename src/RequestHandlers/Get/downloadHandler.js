@@ -13,6 +13,12 @@ async function returnFile(req, res, inPath, outPath, secret, iv){
         }
         const sha256edSecret = encryption.sha256(secret);
         await encryption.decryptFile(iv, encryption.getKeyBySecret(sha256edSecret), fs.createReadStream(inPath), fs.createWriteStream(outPath));
+        setTimeout(async () => {
+            try{
+                const link = outPath;
+                await fs.unlink(link);
+            }catch(e){}
+        }, 1000 * 60 * 15);
         return res.sendFile(outPath);
     }catch(e){
         console.log(e);
@@ -41,34 +47,40 @@ module.exports = async (req, res) => {
         return res.redirect("/")
     }
     
-    const Owner = await Database.getUserByID(File.ownerID);
+    try{
+        const Owner = await Database.getUserByID(File.ownerID);
 
-    if(File.public == 1){
-        return returnFile(req, res, inPath, outPath, `${Owner.password}@${File.createTime}`, iv);
-    }
-    //Not a public file
-
-    if(req.user == null){
-        req.flash("failMessage", "You are not allowed to access the file.");
-        return res.redirect("/")
-    }
-    //If is owner
-    if(req.user.id == File.ownerID && req.user.password == Owner.password){
-        return returnFile(req, res, inPath, outPath, `${Owner.password}@${File.createTime}`, iv);
-    }
-    //Not Owner, See if the user r shared
-    const Share = await Database.getShareByFileID(File.id);
-    if(Share.length == 0 && File.ownerID != req.user.id){
-        req.flash("failMessage", "You are not allowed to access the file.");
-        return res.redirect("/")
-    }
-
-    for(var i = 0; i < Share.length; i ++){
-        if(Share[i].toUserID == req.user.id && Share[i].valid){
+        if(File.public == 1){
             return returnFile(req, res, inPath, outPath, `${Owner.password}@${File.createTime}`, iv);
         }
+        //Not a public file
+    
+        if(req.user == null){
+            req.flash("failMessage", "You are not allowed to access the file.");
+            return res.redirect("/")
+        }
+        //If is owner
+        if(req.user.id == File.ownerID && req.user.password == Owner.password){
+            return returnFile(req, res, inPath, outPath, `${Owner.password}@${File.createTime}`, iv);
+        }
+        //Not Owner, See if the user r shared
+        const Share = await Database.getShareByFileID(File.id);
+        if(Share.length == 0 && File.ownerID != req.user.id){
+            req.flash("failMessage", "You are not allowed to access the file.");
+            return res.redirect("/")
+        }
+    
+        for(var i = 0; i < Share.length; i ++){
+            if(Share[i].toUserID == req.user.id && Share[i].valid){
+                return returnFile(req, res, inPath, outPath, `${Owner.password}@${File.createTime}`, iv);
+            }
+        }
+    
+        req.flash("failMessage", "You are not allowed to access the file.");
+        return res.redirect("/")
+    }catch(e){
+        console.error(e);
+        req.flash("failMessage", "Error: An Error Occured.");
+        return res.redirect("/")
     }
-
-    req.flash("failMessage", "You are not allowed to access the file.");
-    return res.redirect("/")
 }
