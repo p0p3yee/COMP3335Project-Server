@@ -6,7 +6,7 @@ module.exports = async (req, res) => {
     const uploaded = await Database.getUserUploaded(req.user.id);
     const shared = await Database.getAllShareByToUserID(req.user.id);
 
-    const uploadedFiles = []
+    const uploadedFiles = [];
     for(var i = 0; i < uploaded.length; i++){
         if(uploaded[i].deleted) continue;
         if(uploaded[i].link == null || !!!uploaded[i].link){
