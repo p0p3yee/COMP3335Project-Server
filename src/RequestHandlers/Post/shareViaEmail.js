@@ -42,7 +42,6 @@ module.exports = async (req, res) => {
     const result = await Database.createShareViaEmail(req.user.id, req.body.id, req.body.receiverEmail, hash, isOneTime);
     const aLink = `${req.protocol}://${req.headers.host}/share/${hash}`;
     if(result >= 1){
-        console.log(aLink);
         const emailResult = await SendGrid.send(req.body.receiverEmail, 
         "G18Upload - A User shared a file to u !", 
         `Dear User,\nUser - ${user.email} shared a file to you. Here is the access link:\n\n${aLink}\n${isOneTime ? "This is an one-time link" : ""}\nThanks,\nCOMP3335 - Group 18.`,

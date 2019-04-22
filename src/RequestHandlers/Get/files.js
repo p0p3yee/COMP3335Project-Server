@@ -1,15 +1,22 @@
 const Database = require("../../Database");
+const crypto = require("../../Encryption");
 
 module.exports = async (req, res) => {
+
     const uploaded = await Database.getUserUploaded(req.user.id);
     const shared = await Database.getAllShareByToUserID(req.user.id);
 
-    var allDeled = true;
+    const uploadedFiles = []
     for(var i = 0; i < uploaded.length; i++){
-        if(uploaded[i].deleted == 0){
-            allDeled = false;
-            break;
+        if(uploaded[i].deleted) continue;
+        if(uploaded[i].link == null || !!!uploaded[i].link){
+            var nowFileLink = crypto.sha256(`${uploaded[i].name.split("-enc")[0]}${crypto.randHex(16)}`);
+            await Database.setLinkByFileID(uploaded[i].id, nowFileLink);
+            uploaded[i].link = `${req.protocol}://${req.headers.host}/download/${nowFileLink}`;
+        }else{
+            uploaded[i].link = `${req.protocol}://${req.headers.host}/download/${uploaded[i].link}`;
         }
+        uploadedFiles.push(uploaded[i]);
     }
 
     const sharedFiles = [];
@@ -23,9 +30,9 @@ module.exports = async (req, res) => {
     }
 
     res.render("files", {
-        noupload: uploaded.length == 0 || allDeled,
+        noupload: uploadedFiles.length == 0,
         noshare: shared.length == 0,
-        files: uploaded,
+        files: uploadedFiles,
         sharedFiles: sharedFiles,
         user: req.user,
         successMessage: req.flash("successMessage"),

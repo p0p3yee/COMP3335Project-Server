@@ -12,7 +12,6 @@ const   upload = multer({
         fileDeleteHandler = require("../RequestHandlers/Post/fileDelete"),
         fileUpdateHandler = require("../RequestHandlers/Post/fileUpdate"),
         downloadHandler = require("../RequestHandlers/Get/downloadHandler"),
-        getLinkHandler = require("../RequestHandlers/Post/getLinkHandler"),
         shareHandler = require("../RequestHandlers/Get/shareHandler"),
         sharePageHandler = require("../RequestHandlers/Get/sharePageHandler"),
         shareUpdateHandler = require("../RequestHandlers/Post/shareUpdateHandler");
@@ -76,10 +75,4 @@ module.exports = (app, passport) => {
     app.post("/files/update", authed, fileUpdateHandler);
     app.post("/share/update", authed, shareUpdateHandler);
     app.post("/share/email", authed, shareViaEmail)
-    app.post("/files/getLink", (req, res, next) => {
-        if(req.isAuthenticated()) return next();
-        return res.json({
-            error: "Please Login First."
-        })
-    }, getLinkHandler);
 }

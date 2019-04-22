@@ -39,7 +39,8 @@ html
                             th(scope = "col") Upload Time
                             th(scope = "col") Delete
                             th(scope = "col") Privacy
-                            th(scope = "col") Share 
+                            th(scope = "col") Share
+                            th(scope = "col") Open 
                     tbody
                         -
                             var index = 0
@@ -59,6 +60,8 @@ html
                                     td #{v.public ? "Public" : "Private"}
                                     td
                                         button(class = "btn btn-dark" type = "button" data-toggle="modal" data-target="#shareBox" data-link = v.link data-ispublic = v.public data-fileid = v.id data-filename = v.orgName) Setting
+                                    td
+                                        a(class = "btn btn-dark" type = "button" role = "button" target = "_blank" href = v.link) Open
                 div(class = "modal fade" id = "shareBox" tabindex = "-1" role = "dialog" aria-labelledby = "shareBoxTitle" aria-hidden = "true")
                     div(class = "modal-dialog modal-dialog-centered" role = "document")
                         div(class = "modal-content")
@@ -125,26 +128,9 @@ html
                         $("#fileid").val($(e.relatedTarget).data("fileid"))
                         $("#filename").val($(e.relatedTarget).data("filename"))
                         $("#shareEmailID").val($(e.relatedTarget).data("fileid"))
-                        if(!!$(e.relatedTarget).data("link")) $("#accessLink").val(`${window.location.origin}/download/${$(e.relatedTarget).data("link")}`);
+                        if(!!$(e.relatedTarget).data("link")) $("#accessLink").val($(e.relatedTarget).data("link"));
                         $($(e.relatedTarget).data("ispublic") == "0" ? ".privateBtnClass" : ".publicBtnClass").addClass("active");
                         $("#onlyUserID").val("");
-                        if(!!!$(e.relatedTarget).data("link"))
-                            $.ajax({
-                                type: "POST",
-                                url: "/files/getLink",
-                                data: {
-                                    id: $("#fileid").val()
-                                },
-                                success: r => {
-                                    var url = `${window.location.origin}/download/${r.result}`;
-                                    console.log("test");
-                                    $("#accessLink").val(url)
-                                    //- $("#copyBTN").attr("data-clipboard-text", url)
-                                },
-                                error: err => {
-                                    alert("Failed to get Access Link\n" + err)
-                                }
-                            })
                     })
                     $("#saveBtn").on("click", () => {
                         $("#updateForm").submit();
