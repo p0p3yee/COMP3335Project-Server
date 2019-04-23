@@ -23,6 +23,10 @@ new Promise(async (resolve, reject) => {
 .then(conn => {
     this.inited = true;
 
+    this.setShareValid = (id, isValid) => new Promise((resolve, reject) => conn.execute(`UPDATE Share SET valid = ? WHERE id = ?`, [isValid, id])
+    .then(r => resolve(r[0].affectedRows))
+    .catch(e => reject(e)));
+
     this.insertNewUser = (email, password, code) => new Promise((resolve, reject) => conn.execute(`INSERT INTO User (email, password, activationCode) VALUES (?, ?, ?)`, [email, password, code])
     .then(r => resolve({
         affectedRows: r[0].affectedRows,
