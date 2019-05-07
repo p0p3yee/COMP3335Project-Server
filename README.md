@@ -1,6 +1,10 @@
 # COMP3335Project
 
+A File uploading website.
+
 Group 18 COMP3335 Project.
+
+## Built with
 
 Built with `Node.js`.
 
